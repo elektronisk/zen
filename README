@@ -1,0 +1,10 @@
+zen - an imitation of the game Loops of Zen.
+
+To compile, you need Qt 4.6. Compile and run with:
+ qmake -project
+ qmake
+ make
+ ./zen
+
+
+By Andreas Bertheussen
