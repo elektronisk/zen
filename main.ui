@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>293</width>
-    <height>226</height>
+    <width>388</width>
+    <height>223</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -55,6 +55,13 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="timeLabel">
+       <property name="text">
+        <string>TIME</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QSpinBox" name="sizeSpinBox">
        <property name="focusPolicy">

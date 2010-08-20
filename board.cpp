@@ -4,10 +4,7 @@
 #include <board.h>
 
 Board::Board(QWidget *parent) : QWidget(parent) {
-
 	setupBoard(QSize(2,2)); //default size
-	
-	
 }
 
 void Board::resetBoard(QSize dim) {
@@ -16,14 +13,14 @@ void Board::resetBoard(QSize dim) {
 }
 
 void Board::clearBoard() {
-// clear previous board
+	// clear previous board
 	for (int x = 0; x < boardSize.width(); x++) {
 		for (int y = 0; y < boardSize.height(); y++) {
 			delete tileArray[y*boardSize.height() + x];
 		}
 	}
-	delete tileLayout;	// will also delete tiles part of the layout
-	delete tileArray;
+	delete tileLayout;	// Get rid of the layout
+	delete[] tileArray; // And the allocated array of pointers to the tiles that are now gone
 }
 
 void Board::setupBoard(QSize dim) {
@@ -68,8 +65,12 @@ void Board::setupBoard(QSize dim) {
 	
 	for (int x = 0; x < (boardSize.width()); x++) {
 		for (int y = 0; (y < boardSize.height()); y++) {
+			tempTile = tileArray[y*boardSize.height() + x];
 			int r = rand() % 4;
-			tileArray[y*boardSize.height() + x]->rotaten(r);
+			tempTile->rotaten(r);
+			if (tempTile->getEdgecount() == 0) {
+				tempTile->setEnabled(false); // disable tiles with no edges
+			}
 		}
 	}
 	checkSolved();
@@ -93,41 +94,35 @@ void Board::deactivate() {
 }
 
 bool Board::checkSolved() {
-	//std::cout << "CHECKING BOARD" << std::endl;
 	Tile *tempTile;
 	Tile *neighbourTile;
 	for (int x = 0; x < boardSize.width(); x++) {
 		for (int y = 0; y < boardSize.height(); y++) {
-			//std::cout << "Checking tile x=" << x << " y=" << y<< "  linoffset=" <<  y*boardSize.height() + x;
-			tempTile = tileArray[y*boardSize.height() + x]; // pointer to tile
+			// Go through each tile
+			tempTile = tileArray[y*boardSize.height() + x];
 			if (tempTile->getEdgecount() >= 1) {
-			// now, for each direction this tile has an edge, see if neighbour tile also has edge
+				// If this tile has one or more edges, it has to be checked
 				for (int e = 1; e < 16; e *= 2) {
-					//std::cout << "looking for edge " << (int)e << std::endl;
+					// For this tile, check all 4 edges
 					if (tempTile->hasEdge(e)) {
-						//std::cout << "Has edge " << (int)e << std::endl;
-						// edge exists, look at neighbour tiles opposite edge
+						// For each edge, check if it is matched with its neighbour
 						switch(e) {
 							case EDGE_UP:
-								//std::cout << "Up edge should be connected." << std::endl;
 								if (y == 0) { return false; }  // is at edge of the board
 								neighbourTile = tileArray[(y-1)*boardSize.height() + x];
 								if (!neighbourTile->hasEdge(EDGE_DOWN)) {return false;}
 								break;
 							case EDGE_RIGHT:
-								//std::cout << "Right edge should be connected." << std::endl;
 								if (x == boardSize.width()) { return false; }
 								neighbourTile = tileArray[(y)*boardSize.height() + (x+1)];
 								if (!neighbourTile->hasEdge(EDGE_LEFT)) {return false;}
 								break;
 							case EDGE_DOWN:
-								//std::cout << "Down edge should be connected." << std::endl;
 								if (y == boardSize.height()) {return false; }
 								neighbourTile = tileArray[(y+1)*boardSize.height() + x];
 								if (!neighbourTile->hasEdge(EDGE_UP)) {return false;}
 								break;
 							case EDGE_LEFT:
-								//std::cout << "Left edge should be connected." << std::endl;
 								if (x == 0) {return false; }
 								neighbourTile = tileArray[y*boardSize.height() + (x-1)];
 								if (!neighbourTile->hasEdge(EDGE_RIGHT)) {return false;}
@@ -136,7 +131,7 @@ bool Board::checkSolved() {
 					}
 				}
 			} else {
-				//std::cout << "Edgecount was zero" << std::endl;
+				// Tile has no edges to be connected
 			}
 		}
 	}

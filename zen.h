@@ -17,6 +17,7 @@ private slots:
 	void on_startButton_clicked();
 public:
 	Zen();
+	~Zen();
 	
 
 };

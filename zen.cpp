@@ -19,6 +19,12 @@ Zen::Zen() {
 	gameMachine->start();
 }
 
+Zen::~Zen() {
+	delete runningState;
+	delete solvedState;
+	delete gameMachine;
+}
+
 void Zen::on_startButton_clicked() {
-	board->resetBoard(QSize(sizeSpinBox->value(),sizeSpinBox->value()));
+	board->resetBoard(QSize(sizeSpinBox->value(),sizeSpinBox->value())); // Get board size.
 }
